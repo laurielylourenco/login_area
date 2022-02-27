@@ -5,10 +5,3 @@
 Em construção .....
 
 Tecnologia usadas até agora : Postgresql(Banco Dados),Node.js(Express,EJS,Axios, etc), API do Github 
-
-Backend
-[x] Classe de Login
-[x] Classe de Database
-
-
-Front-End  
