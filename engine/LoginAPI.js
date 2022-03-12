@@ -3,38 +3,60 @@ const axios = require('axios');
 module.exports = class LoginAPI {
 
 	constructor(){
-		this.clientSecret = '';
-		this.clientID = '';
+	    this.clientSecret = 'f328de2fec84162642b7';
+	    this.clientID = '1c02170f6d257d80c121563a0ddc257eae2da18a';
 	}
 
+/*
 	async autenticarGithub(code){
 
 		try{
-			const body = {
-			    client_id: this.clientID,
-			    client_secret: this.clientSecret,
+			const  body = {
+			    client_id: '1c02170f6d257d80c121563a0ddc257eae2da18a',
+			    client_secret: 'f328de2fec84162642b7',
 			    code: code
 			};
   			const opts = { headers: { accept: 'application/json' }}
 	
-  			let response = await axios.post(`https://github.com/login/oauth/access_token`, body, opts);
-
-  			console.log(await response);
-  			console.log(await '___________________________________');
-  			console.log(await response.data);
-  			console.log(await '___________________________________');
-  			console.log(await body);
+  			var response = await axios.post(`https://github.com/login/oauth/access_token`, body, opts);
 
 
-  			return response.data;
+
+
+  			return  response.data;
 		}catch(error){
 
 			console.log(await "Caiu no catch");
 			console.log(await error);
 
-			return 1;
+			return await 1;
 		}	
 	}
+*/
+	async autenticarGithub(code){
+
+		try{
+			const  body = {
+			    client_id: '1c02170f6d257d80c121563a0ddc257eae2da18a',
+			    client_secret: 'f328de2fec84162642b7',
+			    code: code
+			};
+  			const opts = {method: 'POST', body: body, headers: { accept: 'application/json' }}
+	
+  			
+  			var res = await fetch('https://github.com/login/oauth/access_token', opts) 
+
+  			return  res.data;
+		}catch(error){
+
+			console.log(await "Caiu no catch");
+			console.log(await error);
+
+			return await 1;
+		}	
+	}
+
+
 
 	async getUserGithub(token){
 
@@ -46,8 +68,8 @@ module.exports = class LoginAPI {
 		    return response.data;
 	  	} catch (error) {
 
-	    	console.error(error);
-	    	return 1;
+	    	console.log( await error);
+	    	return await 1;
   		}
   		
 	}

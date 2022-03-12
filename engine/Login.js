@@ -1,11 +1,11 @@
 const BD = require('./Database.js');
-
+//
 module.exports = class Login extends BD {
 
-    constructor(email,senha) {
+    constructor(dados) {
         super();
-        this.email = email;
-        this.senha = senha;
+        this.email = dados.email;
+        this.senha = dados.senha;
     }
 
 
@@ -33,7 +33,7 @@ module.exports = class Login extends BD {
         }else{
 
  			try{
-                await this.conn.any('INSERT INTO public.code_login (email, senha)  VALUES ($1,$2)', [this.email,this.senha]);
+                await this.conn.any('INSERT INTO public.code_login (email,senha)  VALUES ($1,$2)', [this.email,this.senha]);
             		
             	return await "1";
             }catch(error){

@@ -1,22 +1,38 @@
-<html>
-  <body>
-    <h1>Login</h1>
-    <form action="/login" method="POST">
-      <input name="username" type="text" /> <br/>
-      <input name="password" type="password" /> <br/>
-      <input type="submit" value="Login" />
-    </form>
-    <% if(message) { %>
-      <p>
-        <label style="color:Red"><%= message %></label>
-      </p>
-    <%}%>
-    <p>
-      <a href="#">Esqueceu sua senha?</a> | <a href="/users/signup">Não possui cadastro? <%= id %></a>
-    </p>
-    <p>
-      <a href='https://github.com/login/oauth/authorize?client_id=f328de2fec84162642b7'>Login com github</a>
-    </p>
 
-  </body>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <title>Login</title>
+</head>
+
+
+<body>
+
+    <div class="login">
+       <form action="/login" method="POST" >
+        <input class="item" placeholder="email" name="email" type="text" /> <br/>
+        <input class="item" placeholder="senha" name="senha" type="password" /> <br/>
+        <input class="item" type="submit" value="Login" />
+      </form>
+
+
+
+      <p class="button_api">
+        <a class="item github" href='https://github.com/login/oauth/authorize?client_id=f328de2fec84162642b7'>GITHUB</a>
+      </p>
+
+
+       <p class="link_registrar">
+          <a href="#">Esqueceu sua senha?</a> | 
+          <a href="/registrar">Não possui cadastro?</a>
+        </p>
+        <% if(error == '1') { %>
+        <b> <%= msg %></b>
+        <%}%>
+    </div>
+
+</body>
 </html>
