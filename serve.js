@@ -2,65 +2,55 @@ const express = require('express')
 app =  express();
 const http = require('http').createServer(app);
 const axios = require('axios');
-app.set('view engine', 'ejs');
-app.set('views', 'views');
-app.use(express.static('public'))
 const LoginAPI = require('./engine/LoginAPI.js');
 const Login = require('./engine/Login.js');
 const nodemon = require('nodemon');
 var bodyParser = require('body-parser');
+require('dotenv').config();
+
+const clientId = process.env.CLIENTID;
+const clientSecret = process.env.CLIENTSECRET;
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-
-const clientId = '';
-const clientSecret = '';
-
-
-
+app.set('view engine', 'ejs');
+app.set('views', 'views');
+app.use(express.static('public'))
 
 app.get('/', (req, res) => {
-
-    //res.redirect('http://localhost:4500/login');
 
  res.render('login',{ title: "Funcionou", message: null, id : clientId, error: 0});
 });
 
 
-app.post('/login', (req,res) =>{
-
-   // console.log(req);
+app.post('/login', (req,res) => {
     
-var dados = JSON.stringify(req.body);
-var usuario = new Login(dados);
-(async () => {
+    (async () => {
+        var dados = await JSON.parse(JSON.stringify(req.body));
+        var usuario =  new Login(dados.email, dados.senha);
+        let resp = await usuario.login();
     
-   
-    let resp = await usuario.login();
-    var front;
-    if(resp == 1){
-        front = {
-            msg: "Usuario não possui cadastro",
-            view: "login",
-            error: 1, 
-            tipo : 'Login'
-
+        var front = '';
+        if(resp == 1){
+            front = {
+                msg: "Usuario não possui cadastro",
+                view: "login",
+                error: 1, 
+                tipo : 'Login'
+            }
+        }else{
+          front = {
+            msg: "Bem vindo HOME",
+            view : "home",
+            error : 0,
+            tipo : 'Login',
+            title: "Funcionou"
+          }
         }
-      //  res.redirect('/login', );
-       // 
-    }else{
-      front = {
-        msg: "Bem vindo HOME",
-        view : "home",
-        error : 0,
-        tipo : 'Login'
-      }
-
-      //res.render(front.view, {msg : front.msg, error: front.error, tipo: 'Login' })
-    }
-
-        res.render(front.view, {msg : front.msg, error: front.error, tipo: front.tipo })
-    
-})()    
+ 
+        res.render(front.view, {msg : front.msg, error: front.error, tipo: front.tipo, title : front.title })
+        
+    })()    
 });
 
 
@@ -72,41 +62,33 @@ app.get('/registrar', (req,res) =>{
 
 app.post('/register', (req,res) =>{
 
-var dados = JSON.stringify(req.body);
-var usuario = new Login(dados);
+    (async () => {
+        var dados = await JSON.parse(JSON.stringify(req.body));
 
-console.log(dados);
-(async () => {
-    let resp = await usuario.registrar();
+        var usuario = new Login(dados.email,dados.senha);
+        let resp = await usuario.registrar();
 
-    console.log(resp);
-    var front;
-    if(resp == 1){
-        front = {
-            msg: "Usuario já possui cadastro",
-            view: "register",
-            error: 1, 
+        
+        var front;
+        if(resp == 1){
+            front = {
+                msg: "Usuario já possui cadastro",
+                view: "register",
+                error: 1, 
+                tipo : 'Login'
+            }
+        }else{
+
+          front = {
+            msg: "Bem vindo HOME",
+            view : "home",
+            error : 0,
             tipo : 'Login'
-
+          } 
         }
-      //  res.redirect('/login', );
-    //res.render(front.view, {msg : front.msg, error: front.error, tipo: 'Login' })
-    }else{
-
-      front = {
-        msg: "Bem vindo HOME",
-        view : "home",
-        error : 0,
-        tipo : 'Login'
-      }
-
-      //res.render(front.view, {msg : front.msg, error: front.error, tipo: 'Login' })
-    }
-
         res.render(front.view, {msg : front.msg, error: front.error, tipo: front.tipo })
-    
-})() 
-
+        
+    })() 
 });
 
 app.get('/home', (req, res) => {
@@ -131,10 +113,6 @@ app.get('/home', (req, res) => {
  res.render('home',{ title: "Home do site", tipo: "API"});
 
 });
-
-
-
-
 
 
 http.listen(4500, () => {
