@@ -44,7 +44,7 @@ app.post('/login', (req,res) => {
             view : "home",
             error : 0,
             tipo : 'Login',
-            title: "Funcionou"
+            title: "Logar"
           }
         }
  
@@ -75,7 +75,8 @@ app.post('/register', (req,res) =>{
                 msg: "Usuario já possui cadastro",
                 view: "register",
                 error: 1, 
-                tipo : 'Login'
+                tipo : 'Login',
+                title: 'Registrar'
             }
         }else{
 
@@ -86,7 +87,7 @@ app.post('/register', (req,res) =>{
             tipo : 'Login'
           } 
         }
-        res.render(front.view, {msg : front.msg, error: front.error, tipo: front.tipo })
+        res.render(front.view, {msg : front.msg, error: front.error, tipo: front.tipo, title : front.title })
         
     })() 
 });
