@@ -7,7 +7,7 @@
 ::-webkit-input-placeholder  { 
     float: center;
     width: 250px;
-padding: 10px;
+    padding: 10px;
 }
 
 
@@ -24,10 +24,10 @@ body{
  
   border-radius:20px;
   margin-top: 20px;
-    width: 339px;
-    height: 60px;
-    left: 553px;
-    top: 376px;
+    width: 239px;
+    height: 40px;
+    left: 453px;
+    top: 276px;
 
   
 }
@@ -44,8 +44,8 @@ form{
     background: white;
     border-radius: 10px;
     padding: 15px;
-    height: 500px;
-    width: 400px;
+    height: 400px;
+    width: 350px;
     box-shadow: 10px 9px 13px 10px rgba(0, 0, 0, 0.432);  
 
  

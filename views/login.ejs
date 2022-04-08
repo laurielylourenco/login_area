@@ -8,14 +8,16 @@
     <title>Login</title>
 </head>
 
-
 <body>
 
     <div class="login">
-       <form action="/login" method="POST" >
-        <input class="item" placeholder="email" name="email" type="text" /> <br/>
-        <input class="item" placeholder="senha" name="senha" type="password" /> <br/>
-        <input class="item" type="submit" value="Login" />
+       <form  action="/login" method="POST">
+        <input class="item" placeholder="email" name="email" id="email" type="text" /> 
+        <br/>
+        <input class="item" placeholder="senha" name="senha" id="senha" type="password" /> 
+        <br/>
+       
+         <button class=" item " type="submit">Login</button>
       </form>
 
 
@@ -30,10 +32,16 @@
           <a href="#">Esqueceu sua senha?</a> | 
           <a href="/registrar">Não possui cadastro?</a>
         </p>
-        <% if(error == '1') { %>
-        <b> <%= msg %></b>
-        <%}%>
-    </div>
+
+        <% if (status == 'error') { %>
+            <div class="alert alert-danger" role= "alert" id="error" style="background-color: red;">
+                <%= error %>
+            </div>
+        <% } %>
+
+      
+     </div>
+
 
 </body>
 </html>

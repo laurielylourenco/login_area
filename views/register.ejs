@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="/css/style.css">
-    <title>Register</title>
+    <title>Registrar</title>
 </head>
 
 
@@ -17,6 +17,22 @@
         <input class="item" placeholder="senha" name="senha" type="password" /> <br/>
         <input class="item" type="submit" value="Registrar" />
       </form>
+
+        <% if (status == 'error') { %>
+            <div class="alert alert-danger" role= "alert" id="error" style="background-color: red;">
+                <%= error %>
+            </div>
+        <% } %>
+        <% if (status == 'success') { %>
+            <div class="alert alert-danger" role= "alert" id="error" style="background-color: red;">
+                <%= success %>
+            </div>
+        <% } %>
+     
+
+        <p class="link_registrar">
+          <a href="/">Voltar login</a>
+        </p>
     </div>
 
 </body>
