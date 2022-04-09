@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const conn = require('../database/database.js');
+const middleware = require("../middleware/loginMiddleware.js")
 const axios = require('axios');
-
+const bcryptjs = require("bcryptjs");
 require('dotenv').config();
 
 const clientId = process.env.CLIENTID;
@@ -11,8 +12,6 @@ const clientSecret = process.env.CLIENTSECRET;
 
 
 router.get('/', (req, res) => {
-
-//res.sendFile("login.html",{root : "./views/"});
 
 res.render("login", {id: clientId,status: "ini"})
 });
@@ -27,11 +26,18 @@ router.post('/login', async (req,res) => {
         res.render('login',{status : "error", error: "Esse email não existe!", id:clientId});
 
     }else{
-        if(senha != result[0].senha){
-          return res.render('login',{status : "error", error: "Senha errada",id:clientId});
-
-        }else{
+        var correct  = bcryptjs.compareSync(senha,result[0].senha);
+        if(correct){
+              req.session.user = {
+                id : result[0].id,
+                email: result[0].email
+            }
+                console.log("_____________________________")
+                console.log(req.session.user)
              res.render("home")
+        }else{
+
+            return res.render('login',{status : "error", error: "Senha errada",id:clientId});
         }
     }
 
@@ -40,9 +46,19 @@ router.post('/login', async (req,res) => {
 
 router.get('/registrar', (req,res) =>{
 
-    //res.sendFile("register.html",{root : "./views/"});
-
     res.render("register", {id: clientId,status: "ini"})
+});
+
+router.get('/recuperar', (req,res) =>{
+
+    res.render("forget_password", {status: "ini"})
+});
+
+router.post('/recover_password', async (req,res) =>{
+    const {email } = req.body;
+
+    console.log(email);
+
 });
 
 router.post('/register', async (req,res) =>{
@@ -50,23 +66,23 @@ router.post('/register', async (req,res) =>{
     const {email,senha } = req.body;
 
     var result = await conn.any('SELECT * FROM  public.code_login WHERE email = $1', [email]);
-     
+     console.log(email)
+      console.log(result)
     if(result[0] == null || result == []){
-           // if(err)  throw err;
-            res.render('register',{status : "error", error: "Esse email já existe"})
-
-
-    }else{
-        await conn.any('INSERT INTO public.code_login (email,senha)  VALUES ($1,$2)', [email,senha]);
+          var salt = bcryptjs.genSaltSync(10);
+        var hash = bcryptjs.hashSync(senha,salt);
+        await conn.any('INSERT INTO public.code_login (email,senha)  VALUES ($1,$2)', [email,hash]);
 
         res.render('register',{status : "success", success: "Usuario criado. Vá para pagina de login"})
+    }else{
+      res.render('register',{status : "error", error: "Esse email já existe"})
     }
 
 });
 
 
 
-router.get('/home', (req, res) => {
+router.get('/home', middleware, (req, res) => {
 
    res.render('home');
   
