@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const conn = require('../database/database.js');
-const middleware = require("../middleware/loginMiddleware.js")
+const middleware = require("../middleware/loginMiddleware.js");
 const axios = require('axios');
 const bcryptjs = require("bcryptjs");
 require('dotenv').config();
@@ -17,29 +17,31 @@ res.render("login", {id: clientId,status: "ini"})
 });
 
 router.post('/login', async (req,res) => {
+    try{
+        const {email,senha } = req.body;
+        var result = await conn.any('SELECT * FROM  public.code_login WHERE email = $1', [email]);
+        if(result[0] == null || result == []){
 
-    const {email,senha } = req.body;
-   var result = await conn.any('SELECT * FROM  public.code_login WHERE email = $1', [email]);
-    
-  
-    if(result[0] == null || result == []){
-        res.render('login',{status : "error", error: "Esse email não existe!", id:clientId});
+            throw new Error("Esse email não existe! Registre-se!")
 
-    }else{
-        var correct  = bcryptjs.compareSync(senha,result[0].senha);
-        if(correct){
-              req.session.user = {
-                id : result[0].id,
-                email: result[0].email
-            }
-                console.log("_____________________________")
-                console.log(req.session.user)
-             res.render("home")
         }else{
-
-            return res.render('login',{status : "error", error: "Senha errada",id:clientId});
+            var correct  = bcryptjs.compareSync(senha,result[0].senha);
+            if(correct){
+                req.session.user = {
+                    id : result[0].id,
+                    email: result[0].email
+            }
+            console.log(req.session.user)
+                 res.render("home")
+            }else{
+                throw new Error("Senha errada!")
+            }
         }
+    }catch(err){
+    	 console.error(err);
+        res.render('login',{status : 'error', error: err.message , id:clientId});
     }
+   
 
 });
 
@@ -64,19 +66,29 @@ router.post('/recover_password', async (req,res) =>{
 router.post('/register', async (req,res) =>{
 
     const {email,senha } = req.body;
+	try{
+		var result = await conn.any('SELECT * FROM  public.code_login WHERE email = $1', [email]);
+		     console.log(email)
+		      console.log(result)
+		if(result[0] == null || result == []){
+		        var salt = bcryptjs.genSaltSync(10);
+		        var hash = bcryptjs.hashSync(senha,salt);
+		        await conn.any('INSERT INTO public.code_login (email,senha)  VALUES ($1,$2)', [email,hash]);
 
-    var result = await conn.any('SELECT * FROM  public.code_login WHERE email = $1', [email]);
-     console.log(email)
-      console.log(result)
-    if(result[0] == null || result == []){
-          var salt = bcryptjs.genSaltSync(10);
-        var hash = bcryptjs.hashSync(senha,salt);
-        await conn.any('INSERT INTO public.code_login (email,senha)  VALUES ($1,$2)', [email,hash]);
+		    res.render('register',{status : "success", success: "Usuario criado. Vá para pagina de login"})
+		}else{
+ 				throw new Error("Esse email já existe!Faça o login")
+		   
 
-        res.render('register',{status : "success", success: "Usuario criado. Vá para pagina de login"})
-    }else{
-      res.render('register',{status : "error", error: "Esse email já existe"})
+		 }
+	}catch(err){
+
+        console.error(err);
+        res.render('login',{status : 'error', error: err.message , id:clientId});
+       
+    
     }
+    
 
 });
 
@@ -101,13 +113,20 @@ const body = { client_id: clientId, client_secret: clientSecret, code: req.query
 
             axios.get("https://api.github.com/user",hd)
             .then(function(resp){
-               res.render("home")
+               res.redirect("/home")
             })
-            .catch(err => console.log(err));
+            .catch(err => {
+            	console.error(err)
+            	res.render('login',{status : 'error', error: err.message , id:clientId})
+            });
         })
-        .catch(err => res.status(500).json({ message: err.message }));
+        .catch(e => {
+        	console.error(e)
+        	res.render('login',{status : 'error', error: e.message , id:clientId})
+        	
+        });
 
-
+;
 });
 
 

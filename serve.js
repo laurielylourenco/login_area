@@ -17,9 +17,10 @@ app.set('views', 'views');
 app.use(express.static('public'))
 app.use("/js",express.static(__dirname+"./public/js" ));
 app.use(session({
-    secret: "lslslslsl",cookie: {maxAge: 60*60},
-    saveUninitialized: true,
-    resave: false
+    secret: "lslslslsl",
+    cookie: {maxAge: 1000 * 60 * 60 * 24}, //tempo que vai durar session
+    resave: false,
+    saveUninitialized: true
 
 }))
 
@@ -29,3 +30,5 @@ app.use("/", LoginController);
 http.listen(4500, () => {
     console.log('listening on *:4500');
 });
+
+
